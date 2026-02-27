@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>아이템매니아 마케팅 코어 인덱스</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        pageBg: '#F8F9FA',
+                        cardBg: '#FFFFFF',
+                        textPrimary: '#343A40',
+                        textSecondary: '#6C757D',
+                        borderLight: '#E0E0E0',
+                        accentBlue: '#007BFF',
+                        accentRed: '#DC3545', // Growth
+                        accentBlueAlt: '#007BFF', // Decline (Standardized for UI)
+                        accentGreen: '#28A745',
+                        accentOrange: '#FFC107',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans KR', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        premium: '0 4px 12px rgba(0, 0, 0, 0.08)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #F8F9FA; color: #343A40; -webkit-font-smoothing: antialiased; }
+        .glass-card { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); }
+        .sparkline-container { width: 80px; height: 40px; }
+        .metric-up { color: #DC3545; }
+        .metric-down { color: #007BFF; }
+        .custom-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.5rem; }
+        @media (min-width: 1280px) {
+            .custom-grid { grid-template-columns: repeat(5, 1fr); }
+        }
+    </style>
+</head>
+<body class="p-4 md:p-10 font-sans">
+
+    <div class="max-w-[1400px] mx-auto space-y-8">
+        
+        <!-- Header & Executive Summary -->
+        <header class="space-y-6">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div>
+                    <h1 class="text-3xl md:text-4xl font-bold tracking-tight text-textPrimary">2026년 8주차 아이템매니아 마케팅 코어 인덱스</h1>
+                    <p class="text-lg text-textSecondary mt-2 font-medium">Reporting Period: 2026.02.16 ~ 2026.02.22</p>
+                </div>
+                <div class="bg-white px-4 py-2 rounded-full border border-borderLight shadow-sm inline-flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-accentRed animate-pulse"></span>
+                    <span class="text-sm font-semibold text-textPrimary uppercase">Live Report</span>
+                </div>
+            </div>
+
+            <div class="bg-white border-l-4 border-accentBlue p-6 rounded-r-xl shadow-premium">
+                <h2 class="text-xs font-bold text-accentBlue uppercase tracking-widest mb-3">Executive Summary</h2>
+                <div class="space-y-3 text-textPrimary leading-relaxed">
+                    <p class="flex items-start gap-2">
+                        <span class="mt-1.5 w-1.5 h-1.5 rounded-full bg-textSecondary shrink-0"></span>
+                        총 거래금액(GMV)이 전주 대비 41.2% 급증한 327.2억 원을 기록했으며, 이는 고액 게임머니 및 아이템 거래 활성화에 기인합니다.
+                    </p>
+                    <p class="flex items-start gap-2">
+                        <span class="mt-1.5 w-1.5 h-1.5 rounded-full bg-textSecondary shrink-0"></span>
+                        방문자(+2.8%) 및 로그인(+7.7%) 지표가 동반 상승하며 활성 유저의 플랫폼 고착화가 심화되었으나, 검색 노출(-22%) 감소에 따른 유입 채널 다변화가 시급합니다.
+                    </p>
+                    <p class="flex items-start gap-2">
+                        <span class="mt-1.5 w-1.5 h-1.5 rounded-full bg-textSecondary shrink-0"></span>
+                        CRM 자동화 및 유튜브 인플루언서 협업 확대를 통해 외부 유입을 강화하고, GA4 데이터 파티셔닝 기반의 구매 전환 효율 최적화를 추진할 예정입니다.
+                    </p>
+                </div>
+            </div>
+        </header>
+
+        <!-- Fixed 2x5 KPI Grid -->
+        <section>
+            <div class="custom-grid">
+                <!-- KPI 1: 방문자수 -->
+                <div class="bg-white p-5 rounded-2xl border border-borderLight shadow-premium flex justify-between items-start">
+                    <div class="flex-1">
+                        <p class="text-sm text-textSecondary font-medium">방문자수 (UV)</p>
+                        <h3 class="text-2xl font-bold my-1 text-textPrimary">2,573,512</h3>
+                        <p class="text-xs font-bold metric-up">+2.8% WoW</p>
+                        <p class="text-[11px] text-textSecondary mt-2 leading-tight">리텐션 강화 흐름</p>
+                    </div>
+                    <div class="sparkline-container"><canvas id="spark1"></canvas></div>
+                </div>
+                <!-- KPI 2: 로그인수 -->
+                <div class="bg-white p-5 rounded-2xl border border-borderLight shadow-premium flex justify-between items-start">
+                    <div class="flex-1">
+                        <p class="text-sm text-textSecondary font-medium">로그인수</p>
+                        <h3 class="text-2xl font-bold my-1 text-textPrimary">1,102,480</h3>
+                        <p class="text-xs font-bold metric-up">+7.7% WoW</p>
+                        <p class="text-[11px] text-textSecondary mt-2 leading-tight">진성 유저 활동 증가</p>
+                    </div>
+                    <div class="sparkline-container"><canvas id="spark2"></canvas></div>
+                </div>
+                <!-- KPI 3: 가입자수 -->
+                <div class="bg-white p-5 rounded-2xl border border-borderLight shadow-premium flex justify-between items-start">
+                    <div class="flex-1">
+                        <p class="text-sm text-textSecondary font-medium">가입자수</p>
+                        <h3 class="text-2xl font-bold my-1 text-textPrimary">14,203</h3>
+                        <p class="text-xs font-bold metric-down">-1.7% WoW</p>
+                        <p class="text-[11px] text-textSecondary mt-2 leading-tight">신규 유입 채널 보강 필요</p>
+                    </div>
+                    <div class="sparkline-container"><canvas id="spark3"></canvas></div>
+                </div>
+                <!-- KPI 4: CTR -->
+                <div class="bg-white p-5 rounded-2xl border border-borderLight shadow-premium flex justify-between items-start">
+                    <div class="flex-1">
+                        <p class="text-sm text-textSecondary font-medium">CTR</p>
+                        <h3 class="text-2xl font-bold my-1 text-textPrimary">36.57%</h3>
+                        <p class="text-xs font-bold metric-down">-5.1% WoW</p>
+                        <p class="text-[11px] text-textSecondary mt-2 leading-tight">검색 효율 조정 국면</p>
+                    </div>
+                    <div class="sparkline-container"><canvas id="spark4"></canvas></div>
+                </div>
+                <!-- KPI 5: 평단가 -->
+                <div class="bg-white p-5 rounded-2xl border border-borderLight shadow-premium flex justify-between items-start">
+                    <div class="flex-1">
+                        <p class="text-sm text-textSecondary font-medium">평단가</p>
+                        <h3 class="text-2xl font-bold my-1 text-textPrimary">382,342원</h3>
+                        <p class="text-xs font-bold metric-up">+29.2% WoW</p>
+                        <p class="text-[11px] text-textSecondary mt-2 leading-tight">고액 결제 비중 확대</p>
+                    </div>
+                    <div class="sparkline-container"><canvas id="spark5"></canvas></div>
+                </div>
+                <!-- KPI 6: 거래건수 -->
+                <div class="bg-white p-5 rounded-2xl border border-borderLight shadow-premium flex justify-between items-start">
+                    <div class="flex-1">
+                        <p class="text-sm text-textSecondary font-medium">거래건수</p>
+                        <h3 class="text-2xl font-bold my-1 text-textPrimary">85,578</h3>
+                        <p class="text-xs font-bold metric-up">+9.3% WoW</p>
+                        <p class="text-[11px] text-textSecondary mt-2 leading-tight">시장 거래 활발</p>
+                    </div>
+                    <div class="sparkline-container"><canvas id="spark6"></canvas></div>
+                </div>
+                <!-- KPI 7: 거래금액 -->
+                <div class="bg-white p-5 rounded-2xl border border-borderLight shadow-premium flex justify-between items-start">
+                    <div class="flex-1">
+                        <p class="text-sm text-textSecondary font-medium">거래금액 (GMV)</p>
+                        <h3 class="text-2xl font-bold my-1 text-textPrimary">327.2억</h3>
+                        <p class="text-xs font-bold metric-up">+41.2% WoW</p>
+                        <p class="text-[11px] text-textSecondary mt-2 leading-tight">주간 최대 실적 달성</p>
+                    </div>
+                    <div class="sparkline-container"><canvas id="spark7"></canvas></div>
+                </div>
+                <!-- KPI 8: 거래자 -->
+                <div class="bg-white p-5 rounded-2xl border border-borderLight shadow-premium flex justify-between items-start">
+                    <div class="flex-1">
+                        <p class="text-sm text-textSecondary font-medium">거래자</p>
+                        <h3 class="text-2xl font-bold my-1 text-textPrimary">62,810</h3>
+                        <p class="text-xs font-bold metric-up">+5.5% WoW</p>
+                        <p class="text-[11px] text-textSecondary mt-2 leading-tight">참여 유저수 반등</p>
+                    </div>
+                    <div class="sparkline-container"><canvas id="spark8"></canvas></div>
+                </div>
+                <!-- KPI 9: 판매자 -->
+                <div class="bg-white p-5 rounded-2xl border border-borderLight shadow-premium flex justify-between items-start">
+                    <div class="flex-1">
+                        <p class="text-sm text-textSecondary font-medium">판매자</p>
+                        <h3 class="text-2xl font-bold my-1 text-textPrimary">28,450</h3>
+                        <p class="text-xs font-bold metric-up">+4.1% WoW</p>
+                        <p class="text-[11px] text-textSecondary mt-2 leading-tight">공급 물량 안정세</p>
+                    </div>
+                    <div class="sparkline-container"><canvas id="spark9"></canvas></div>
+                </div>
+                <!-- KPI 10: 구매자 -->
+                <div class="bg-white p-5 rounded-2xl border border-borderLight shadow-premium flex justify-between items-start">
+                    <div class="flex-1">
+                        <p class="text-sm text-textSecondary font-medium">구매자</p>
+                        <h3 class="text-2xl font-bold my-1 text-textPrimary">34,360</h3>
+                        <p class="text-xs font-bold metric-up">+6.7% WoW</p>
+                        <p class="text-[11px] text-textSecondary mt-2 leading-tight">수요 유입 가속화</p>
+                    </div>
+                    <div class="sparkline-container"><canvas id="spark10"></canvas></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Trend Analysis Section -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- 5-Week Transaction Trend -->
+            <div class="bg-white p-8 rounded-2xl shadow-premium border border-borderLight">
+                <div class="mb-6">
+                    <h3 class="text-xl font-bold text-textPrimary">주간 거래금액 추이 (최근 5주)</h3>
+                    <p class="text-sm text-textSecondary mt-1">2월 8주차 거래액 폭증 (WoW +41.2%) 전략적 성과 검증</p>
+                </div>
+                <div class="h-[350px]">
+                    <canvas id="stackedTrendChart"></canvas>
+                </div>
+                <div class="flex justify-center gap-6 mt-6">
+                    <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-sm bg-[#007BFF]"></span><span class="text-xs font-medium">게임머니</span></div>
+                    <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-sm bg-[#4DA6FF]"></span><span class="text-xs font-medium">아이템</span></div>
+                    <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-sm bg-[#CED4DA]"></span><span class="text-xs font-medium">기타/계정</span></div>
+                </div>
+            </div>
+
+            <!-- GSC Search Performance -->
+            <div class="bg-white p-8 rounded-2xl shadow-premium border border-borderLight">
+                <div class="mb-6">
+                    <h3 class="text-xl font-bold text-textPrimary">Google Search Console 주간 트렌드</h3>
+                    <p class="text-sm text-textSecondary mt-1">노출 감소에도 불구하고 클릭 유지, 타겟 탐색 성향 강화</p>
+                </div>
+                <div class="h-[350px]">
+                    <canvas id="gscComboChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Category Composition -->
+            <div class="bg-white p-8 rounded-2xl shadow-premium border border-borderLight">
+                <div class="mb-6">
+                    <h3 class="text-xl font-bold text-textPrimary">2026년 8주차 카테고리별 거래금액 구성</h3>
+                    <p class="text-sm text-textSecondary mt-1">게임머니 카테고리(약 238.7억)가 전체 성장의 핵심 동력</p>
+                </div>
+                <div class="h-[350px]">
+                    <canvas id="categoryHBarChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Weekly Growth Rate (WoW) -->
+            <div class="bg-white p-8 rounded-2xl shadow-premium border border-borderLight">
+                <div class="mb-6">
+                    <h3 class="text-xl font-bold text-textPrimary">주요 지표별 주간 성장률 (WoW)</h3>
+                    <p class="text-sm text-textSecondary mt-1">거래 금액 및 단가의 폭발적 상승세 확인</p>
+                </div>
+                <div class="h-[350px]">
+                    <canvas id="wowGrowthChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Weekly Action Plan Section -->
+        <section class="bg-white p-8 rounded-2xl shadow-premium border border-borderLight">
+            <h2 class="text-2xl font-bold text-textPrimary mb-8 border-b pb-4">[금주 예정 업무]</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="space-y-4">
+                    <div class="w-10 h-10 bg-accentBlue/10 rounded-lg flex items-center justify-center text-accentBlue font-bold">01</div>
+                    <h4 class="text-lg font-bold">거래 활성화 및 CRM 고도화</h4>
+                    <ul class="text-sm text-textSecondary space-y-2 leading-relaxed">
+                        <li><strong class="text-textPrimary">Action:</strong> 휴면 유저 대상 자동화 앱 PUSH 및 LMS 발송 (리타겟팅)</li>
+                        <li><strong class="text-textPrimary">Goal:</strong> 방문자 상승폭 유지 및 BUR 극대화로 300억대 거래액 안착</li>
+                        <li class="pl-2 border-l-2 border-borderLight italic text-[13px]">로그인 후 미거래 유저 대상 맞춤 혜택 정보 DM 발송</li>
+                    </ul>
+                </div>
+                <div class="space-y-4">
+                    <div class="w-10 h-10 bg-accentRed/10 rounded-lg flex items-center justify-center text-accentRed font-bold">02</div>
+                    <h4 class="text-lg font-bold">인플루언서 기반 신규 유입 확장</h4>
+                    <ul class="text-sm text-textSecondary space-y-2 leading-relaxed">
+                        <li><strong class="text-textPrimary">Action:</strong> 커뮤니티 유튜버 이벤트 및 신규 3인 광고 콘텐츠 집행</li>
+                        <li><strong class="text-textPrimary">Goal:</strong> GSC 노출 하락 상쇄 및 신규 가입자 WoW 반등 달성</li>
+                        <li class="pl-2 border-l-2 border-borderLight italic text-[13px]">총 11인의 유튜버 제휴 구조 확대로 코어 게이머 직접 공략</li>
+                    </ul>
+                </div>
+                <div class="space-y-4">
+                    <div class="w-10 h-10 bg-accentGreen/10 rounded-lg flex items-center justify-center text-accentGreen font-bold">03</div>
+                    <h4 class="text-lg font-bold">데이터 인프라 및 콘텐츠 최적화</h4>
+                    <ul class="text-sm text-textSecondary space-y-2 leading-relaxed">
+                        <li><strong class="text-textPrimary">Action:</strong> GA4 데이터 테이블 파티셔닝 완료 및 대시보드 최종 검수</li>
+                        <li><strong class="text-textPrimary">Goal:</strong> 유입-전환-거래 유저 행동 흐름 정밀 분석 및 이탈점 개선</li>
+                        <li class="pl-2 border-l-2 border-borderLight italic text-[13px]">사이트 가이드 및 안전거래 영상 제작으로 신규 유입 허들 완화</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        // Common Chart Options
+        const commonOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: { grid: { color: '#F1F3F5' }, border: { display: false } },
+                x: { grid: { display: false }, border: { display: false } }
+            }
+        };
+
+        // Sparklines Initialization
+        function initSpark(id, data, color) {
+            new Chart(document.getElementById(id), {
+                type: 'line',
+                data: {
+                    labels: [1, 2],
+                    datasets: [{
+                        data: data,
+                        borderColor: color,
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false }, tooltip: { enabled: false } },
+                    scales: { x: { display: false }, y: { display: false } }
+                }
+            });
+        }
+
+        const colors = { red: '#DC3545', blue: '#007BFF' };
+        initSpark('spark1', [2503512, 2573512], colors.red);
+        initSpark('spark2', [1023480, 1102480], colors.red);
+        initSpark('spark3', [14450, 14203], colors.blue);
+        initSpark('spark4', [38.5, 36.57], colors.blue);
+        initSpark('spark5', [295800, 382342], colors.red);
+        initSpark('spark6', [78300, 85578], colors.red);
+        initSpark('spark7', [231.7, 327.2], colors.red);
+        initSpark('spark8', [59530, 62810], colors.red);
+        initSpark('spark9', [27330, 28450], colors.red);
+        initSpark('spark10', [32200, 34360], colors.red);
+
+        // 5-Week Transaction Trend Chart
+        new Chart(document.getElementById('stackedTrendChart'), {
+            type: 'bar',
+            data: {
+                labels: ["1월 4주", "2월 5주", "2월 6주", "2월 7주", "2월 8주"],
+                datasets: [
+                    { label: '게임머니', data: [117, 111, 103, 180, 238], backgroundColor: '#007BFF' },
+                    { label: '아이템', data: [22, 23, 22, 39, 70], backgroundColor: '#4DA6FF' },
+                    { label: '기타/계정', data: [10, 10, 11, 11, 18], backgroundColor: '#CED4DA' }
+                ]
+            },
+            options: {
+                ...commonOptions,
+                scales: {
+                    x: { stacked: true, grid: { display: false } },
+                    y: { stacked: true, title: { display: true, text: '억원' } }
+                }
+            }
+        });
+
+        // GSC Combo Chart
+        new Chart(document.getElementById('gscComboChart'), {
+            type: 'bar',
+            data: {
+                labels: ["1월 4주", "2월 5주", "2월 6주", "2월 7주", "2월 8주"],
+                datasets: [
+                    { 
+                        label: '노출수', 
+                        data: [453, 438, 486, 567, 442], 
+                        backgroundColor: '#E9ECEF', 
+                        order: 2, 
+                        yAxisID: 'y' 
+                    },
+                    { 
+                        label: '클릭수', 
+                        data: [156, 149, 166, 215, 161], 
+                        type: 'line', 
+                        borderColor: '#007BFF', 
+                        backgroundColor: '#007BFF', 
+                        order: 1, 
+                        yAxisID: 'y' 
+                    },
+                    { 
+                        label: '클릭률(%)', 
+                        data: [34.54, 34.09, 34.27, 38.05, 36.57], 
+                        type: 'line', 
+                        borderColor: '#28A745', 
+                        backgroundColor: '#28A745', 
+                        borderDash: [5, 5],
+                        order: 0, 
+                        yAxisID: 'y1' 
+                    }
+                ]
+            },
+            options: {
+                ...commonOptions,
+                plugins: { legend: { display: true, position: 'top', align: 'end', labels: { boxWidth: 12, font: { size: 10 } } } },
+                scales: {
+                    y: { type: 'linear', position: 'left', title: { display: true, text: '건(천)' } },
+                    y1: { type: 'linear', position: 'right', grid: { display: false }, title: { display: true, text: '%' } }
+                }
+            }
+        });
+
+        // Category Horizontal Bar Chart
+        new Chart(document.getElementById('categoryHBarChart'), {
+            type: 'bar',
+            data: {
+                labels: ["게임머니", "아이템", "기타", "계정"],
+                datasets: [{
+                    data: [238.7, 70.2, 10.5, 7.7],
+                    backgroundColor: ['#007BFF', '#4DA6FF', '#B3D9FF', '#E9ECEF'],
+                    borderRadius: 10,
+                    barThickness: 24
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                ...commonOptions,
+                scales: {
+                    x: { title: { display: true, text: '거래금액(억원)' } },
+                    y: { grid: { display: false } }
+                }
+            }
+        });
+
+        // WoW Growth Rate Chart
+        new Chart(document.getElementById('wowGrowthChart'), {
+            type: 'bar',
+            data: {
+                labels: ["거래금액", "평단가", "거래건수", "로그인수", "방문자수", "CTR", "가입자수"],
+                datasets: [{
+                    data: [41.2, 29.2, 9.3, 7.7, 2.8, -5.1, -1.7],
+                    backgroundColor: (ctx) => ctx.raw > 0 ? '#DC3545' : '#007BFF',
+                    borderRadius: 5
+                }]
+            },
+            options: {
+                ...commonOptions,
+                scales: {
+                    y: { title: { display: true, text: '성장률 (%)' } }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
